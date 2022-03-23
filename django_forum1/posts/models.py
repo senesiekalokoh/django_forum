@@ -13,7 +13,7 @@ class Post(models.Model):
         'Body', blank=True, null=True, max_length=140, db_index=True
     )
     image = CloudinaryField (
-        'Image', blank=True, db_index=True
+        'image', blank=True, db_index=True
     )
     like_count = models.PositiveBigIntegerField('like_count', default=0, blank=True)
     created_at = models.DateTimeField(

@@ -9,7 +9,7 @@ from django.urls import reverse_lazy, reverse
 def index(request):
     # If the message is POST
     if request.method == 'POST':
-        form = PostForm(request.POST)
+        form = PostForm(request.POST,request.FILES)
         
         # If the form is valid
         if form.is_valid():
@@ -21,11 +21,11 @@ def index(request):
 
         else:
             # No, Show Error
-            return HttpResponseRedirect(form.erros.as_json())
+            return HttpResponseRedirect(form.errors.as_json())
 
 
     # Get all posts, limit = 20
-    posts = Post.objects.all()[:20]
+    posts = Post.objects.all().order_by('-created_at')[:20]
 
     # Show
     return render(request, 'posts.html',
@@ -43,3 +43,13 @@ def like(request, post_id):
     post.save()
     return HttpResponseRedirect('/')
     
+def update(request, post_id):
+    post = Post.objects.get(id=post_id)
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/')
+    else: 
+        form=PostForm
+        return render(request, 'update.html', {'post':post, 'form':form})
